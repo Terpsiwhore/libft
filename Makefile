@@ -34,6 +34,12 @@ CHAR_OBJ    = $(addprefix $(OBJ_DIR), $(CHAR_SRC:.c=.o))
 
 #-------------------------------------------------------------------------------
 
+GNL_DIR     = gnl/
+GNL_SRC     = ft_get_next_line.c
+GNL_OBJ     = $(addprefix $(OBJ_DIR), $(GNL_SRC:.c=.o))
+
+#-------------------------------------------------------------------------------
+
 LIST_DIR    = list/
 LIST_SRC    = ft_lstadd_back.c  ft_lstadd_front.c   ft_lstclear.c              \
               ft_lstdelone.c    ft_lstiter.c        ft_lstlast.c               \
@@ -67,7 +73,8 @@ STR_OBJ     = $(addprefix $(OBJ_DIR), $(STR_SRC:.c=.o))
 
 #===============================================================================
 
-OBJ			= $(CHAR_OBJ) $(LIST_OBJ) $(MEM_OBJ) $(OUT_OBJ) $(STR_OBJ)
+OBJ			= $(CHAR_OBJ) $(GNL_OBJ) $(LIST_OBJ) $(MEM_OBJ) $(OUT_OBJ)         \
+              $(STR_OBJ)
 
 #===============================================================================
 
@@ -84,9 +91,12 @@ $(OBJ_DIR):
 #-------------------------------------------------------------------------------
 
 .PHONY: objs
-objs: $(CHAR_OBJ) $(LIST_OBJ) $(MEM_OBJ) $(OUT_OBJ) $(STR_OBJ)
+objs: $(CHAR_OBJ) $(GNL_OBJ) $(LIST_OBJ) $(MEM_OBJ) $(OUT_OBJ) $(STR_OBJ)
 
 $(CHAR_OBJ): $(OBJ_DIR)%.o: $(CHAR_DIR)%.c $(HEAD)
+		$(CC) -I $(HDR_DIR) $(FLAGS) -c $< -o $@
+
+$(GNL_OBJ): $(OBJ_DIR)%.o: $(GNL_DIR)%.c $(HEAD)
 		$(CC) -I $(HDR_DIR) $(FLAGS) -c $< -o $@
 
 $(LIST_OBJ): $(OBJ_DIR)%.o: $(LIST_DIR)%.c $(HEAD)
@@ -106,21 +116,20 @@ $(STR_OBJ): $(OBJ_DIR)%.o: $(STR_DIR)%.c $(HEAD)
 .PHONY: so
 so: $(NAME_SO)
 
-$(NAME_SO): $(OBJ) $(OBJ_BONUS)
-		$(CC) -shared -o $(NAME_SO) $(OBJ) $(OBJ_BONUS)
+$(NAME_SO): $(OBJ)
+		$(CC) -shared -o $(NAME_SO) $(OBJ)
 
 #===============================================================================
 
 .PHONY: clean
 clean:
-		rm -f $(OBJ) $(OBJ_BONUS)
+		rm -rf $(OBJ_DIR)
 
 #-------------------------------------------------------------------------------
 
 .PHONY: fclean
 fclean: clean
 		rm -f $(NAME) $(NAME_SO)
-
 #-------------------------------------------------------------------------------
 
 .PHONY: re
